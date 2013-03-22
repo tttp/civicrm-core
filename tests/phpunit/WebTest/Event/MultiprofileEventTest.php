@@ -60,8 +60,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // get custom group id
-    $elements = $this->parseURL();
-    $customGrpId1 = $elements['queryString']['gid'];
+    $customGrpId1 = $this->urlArg('gid');
 
     $customId = $this->_testGetCustomFieldId($customGrpId1);
 
@@ -161,8 +160,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // get custom group id
-    $elements = $this->parseURL();
-    $customGrpId1 = $elements['queryString']['gid'];
+    $customGrpId1 = $this->urlArg('gid');
 
     $customId = $this->_testGetCustomFieldId($customGrpId1);
 
@@ -417,13 +415,11 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->type('title', $profilename);
     $this->click('_qf_Group_next-top');
     $this->waitForPageToLoad($this->getTimeoutMsec());
-    $elements = $this->parseURL();
-    $profileId = $elements['queryString']['gid'];
+    $profileId = $this->urlArg('gid');
 
     //Add field to profile_testCreateProfile
     foreach ($profilefield as $key => $value) {
       $this->openCiviPage("admin/uf/group/field/add", "reset=1&action=add&gid=$profileId");
-      $this->waitForPageToLoad($this->getTimeoutMsec());
       if (in_array($value, $locationfields)) {
         $this->select("field_name[0]", "value={$type}");
         $this->select("field_name[1]", "value={$value}");
@@ -494,7 +490,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
 
     // select newly created processor
     $xpath = "xpath=//label[text() = '{$processorName}']/preceding-sibling::input[1]";
-    $this->assertTrue($this->isTextPresent($processorName));
+    $this->assertElementContainsText('css=.crm-event-manage-fee-form-block-payment_processor', $processorName);
     $this->check($xpath);
     $this->select("financial_type_id", "label=Event Fee");
     if ($priceSet) {
@@ -581,12 +577,9 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
 
     // Wait for "saved" status msg
     $this->waitForPageToLoad($this->getTimeoutMsec());
-    $elements = $this->parseURL();
-    $eventPageId = $elements['queryString']['id'];
+    $this->waitForText('crm-notification-container', "'Registration' information has been saved.");
 
-    $this->waitForTextPresent("'Registration' information has been saved.");
-
-    return $eventPageId;
+    return $this->urlArg('id');
   }
 
   function _testEventRegistration($eventPageId, $customId, $firstName, $lastName,
@@ -744,7 +737,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
 
     $cfId = "";
     //check wheather webtest has created the field
-    if (!$this->isTextPresent("The selected field was not added. It already exists in this profile")) {
+    if($this->assertElementNotContainsText('crm-notification-container', "The selected field was not added. It already exists in this profile")) {
       $this->waitForElementPresent("xpath=//div[@id='field_page']//table/tbody//tr[8]/td[9]/span/a[text()='Edit']");
       $cfId = explode('&id=', $this->getAttribute("xpath=//div[@id='field_page']//table/tbody//tr[8]/td[9]/span/a[text()='Edit']/@href"));
       $cfId = $cfId[1];
@@ -759,4 +752,3 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 }
-
