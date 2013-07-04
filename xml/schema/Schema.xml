@@ -7,6 +7,7 @@
 <table_type>InnoDB</table_type>
 <comment>Schema for CiviCRM</comment>
 
+<xi:include href="Sepa/files.xml"          parse="xml" />
 <xi:include href="Core/files.xml"              parse="xml" />
 <xi:include href="ACL/files.xml"               parse="xml" />
 <xi:include href="Contact/files.xml"           parse="xml" />

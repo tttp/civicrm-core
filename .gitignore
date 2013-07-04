@@ -1,5 +1,6 @@
 *~
 *.bak
+*.swp
 CRM/ACL/DAO
 CRM/Activity/DAO
 CRM/Auction/DAO
